@@ -1,0 +1,15 @@
+name: Build FFmpeg on branch
+
+on:
+  push:
+    branches: ["main"]
+    paths: ["scripts/**", ".github/workflows/**", "checksums/**"]
+  pull_request:
+    paths: ["scripts/**", ".github/workflows/**", "checksums/**"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_ffmpeg.yml
+    with:
+      debug: ${{ inputs.debug || false }}
