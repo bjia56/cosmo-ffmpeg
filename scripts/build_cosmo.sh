@@ -27,3 +27,20 @@ export PKG_CONFIG_PATH="${DEPSDIR}/lib/pkgconfig:${DEPSDIR}/share/pkgconfig"
 mkdir -p ${DEPSDIR}/lib/.aarch64
 
 echo "::endgroup::"
+##########
+# FFmpeg #
+##########
+echo "::group::FFmpeg"
+cd ${BUILDDIR}
+
+wget https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz
+tar xf ffmpeg-6.1.tar.gz
+cd ffmpeg-6.1
+./configure --prefix=${DEPSDIR}
+make -j4
+make install
+
+cd ${WORKDIR}
+cp ${DEPSDIR}/bin/ffmpeg ffmpeg.com
+
+echo "::endgroup::"
