@@ -15,9 +15,11 @@ sudo apt -y install \
   wget pkg-config autoconf git patch nasm \
   gettext bison libtool autopoint gperf ncurses-bin xutils-dev
 
-export AR=$(command -v cosmoar)
-export CC=cosmocc
-export CXX=cosmoc++
+export AR=${ARCH}-unknown-cosmo-ar
+export AS=${ARCH}-unknown-cosmo-as
+export NM="${ARCH}-unknown-cosmo-nm -g"
+export CC=${ARCH}-unknown-cosmo-cc
+export CXX=${ARCH}-unknown-cosmo-c++
 export CFLAGS="-I${DEPSDIR}/include"
 export CPPFLAGS="-I${DEPSDIR}/include"
 export CXXFLAGS="${CPPFLAGS} -fexceptions"
@@ -36,7 +38,7 @@ cd ${BUILDDIR}
 wget https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz
 tar xf ffmpeg-6.1.tar.gz
 cd ffmpeg-6.1
-./configure --prefix=${DEPSDIR} --enable-cross-compile
+./configure --prefix=${DEPSDIR} --enable-cross-compile --cc=${CC} --cxx=${CXX} --ld=${CXX} --ar=${AR} --as=${AS}--nm="${NM}"
 make -j4
 make install
 

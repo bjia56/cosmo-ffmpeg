@@ -36,7 +36,7 @@ jobs:
 
       - name: Build
         run: |
-          ./scripts/build_cosmo.sh
+          ./scripts/build_cosmo.sh x86_64
 
       - name: Interactive debugging
         if: ${{ always() && inputs.debug_interactive }}
@@ -100,6 +100,7 @@ jobs:
         if: ${{ !contains(matrix.os, 'BSD') }}
         shell: bash
         run: |
+          chmod +x ./ffmpeg/ffmpeg.com
           ./ffmpeg/ffmpeg.com
 
       - name: Test in VM
@@ -109,6 +110,7 @@ jobs:
           usesh: true
           copyback: false
           run: |
+            chmod +x ./ffmpeg/ffmpeg.com
             ./ffmpeg/ffmpeg.com
 
       - name: Test in VM
@@ -118,6 +120,7 @@ jobs:
           usesh: true
           copyback: false
           run: |
+            chmod +x ./ffmpeg/ffmpeg.com
             ./ffmpeg/ffmpeg.com
 
       - name: Test in VM
@@ -127,4 +130,5 @@ jobs:
           usesh: true
           copyback: false
           run: |
+            chmod +x ./ffmpeg/ffmpeg.com
             ./ffmpeg/ffmpeg.com
