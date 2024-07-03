@@ -12,7 +12,7 @@ echo "::group::Install dependencies"
 export DEBIAN_FRONTEND=noninteractive
 sudo apt update
 sudo apt -y install \
-  wget pkg-config autoconf git patch \
+  wget pkg-config autoconf git patch nasm \
   gettext bison libtool autopoint gperf ncurses-bin xutils-dev
 
 export AR=$(command -v cosmoar)
