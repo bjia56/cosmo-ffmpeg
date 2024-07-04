@@ -28,6 +28,9 @@ export PKG_CONFIG_PATH="${DEPSDIR}/lib/pkgconfig:${DEPSDIR}/share/pkgconfig"
 
 mkdir -p ${DEPSDIR}/lib/.aarch64
 
+mkdir -p ${DEPSDIR}/include/sys
+touch ${DEPSDIR}/include/sys/sysctl.h
+
 echo "::endgroup::"
 ##########
 # FFmpeg #
