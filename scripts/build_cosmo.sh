@@ -41,7 +41,7 @@ cd ${BUILDDIR}
 wget https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz
 tar xf ffmpeg-6.1.tar.gz
 cd ffmpeg-6.1
-./configure --prefix=${DEPSDIR} --enable-cross-compile --cc=${CC} --cxx=${CXX} --ld=${CXX} --ar=${AR} --as=${AS}--nm="${NM}"
+./configure --prefix=${DEPSDIR} --enable-cross-compile --cc=${CC} --cxx=${CXX} --ld=${CXX} --ar=${AR} --as=${AS} --nm="${NM}"
 make -j4
 make install
 
