@@ -61,6 +61,7 @@ jobs:
 
   link_cosmo:
     name: Cosmopolitan FFmpeg (link)
+    needs: build_cosmo
     runs-on: ubuntu-latest
     steps:
       - name: Set up cosmocc
