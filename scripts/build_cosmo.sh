@@ -46,6 +46,6 @@ make -j4
 make install
 
 cd ${WORKDIR}
-cp ${DEPSDIR}/bin/ffmpeg ffmpeg.com
+cp ${DEPSDIR}/bin/ffmpeg ffmpeg
 
 echo "::endgroup::"
