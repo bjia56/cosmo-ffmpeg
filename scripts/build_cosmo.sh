@@ -31,9 +31,10 @@ mkdir -p ${DEPSDIR}/lib/.aarch64
 mkdir -p ${DEPSDIR}/include/sys
 touch ${DEPSDIR}/include/sys/sysctl.h
 
-wget https://raw.githubusercontent.com/yuvi/gas-preprocessor/master/gas-preprocessor.pl
+wget https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl
 chmod +x gas-preprocessor.pl
 sudo mv gas-preprocessor.pl /usr/local/bin/
+which gas-preprocessor.pl
 
 echo "::endgroup::"
 ##########
