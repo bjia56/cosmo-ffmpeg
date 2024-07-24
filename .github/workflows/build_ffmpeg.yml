@@ -25,6 +25,44 @@ jobs:
   build_cosmo:
     name: Cosmopolitan FFmpeg (build)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, x86_64]
+    steps:
+      - name: Set up cosmocc
+        uses: bjia56/setup-cosmocc@v0.0.3
+        with:
+          version: 3.6.0
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          ./scripts/build_cosmo.sh ${{ matrix.arch }}
+
+      - name: Interactive debugging
+        if: ${{ always() && inputs.debug_interactive }}
+        uses: fawazahmed0/action-debug@v2
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-${{ matrix.arch }}
+          path: ./ffmpeg
+
+      - name: Upload artifacts
+        if: ${{ always()  && inputs.debug }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-ffmpeg-${{ matrix.arch }}
+          path: ./build-ffmpeg.tar.gz
+
+  link_cosmo:
+    name: Cosmopolitan FFmpeg (link)
+    needs: build_cosmo
+    runs-on: ubuntu-latest
     steps:
       - name: Set up cosmocc
         uses: bjia56/setup-cosmocc@v0.0.3
@@ -34,13 +72,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
-        run: |
-          ./scripts/build_cosmo.sh
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ffmpeg-x86_64
+          path: ./ffmpeg-x86_64
 
-      - name: Interactive debugging
-        if: ${{ always() && inputs.debug_interactive }}
-        uses: fawazahmed0/action-debug@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ffmpeg-aarch64
+          path: ./ffmpeg-aarch64
+
+      - name: Link
+        run: |
+          COSMO=$(dirname $(which cosmocc))
+          apelink -l "$COSMO/ape-x86_64.elf" \
+            -l "$COSMO/ape-aarch64.elf" \
+            -M "$COSMO/ape-m1.c" \
+            -o ffmpeg.com \
+            ./ffmpeg-x86_64/ffmpeg ./ffmpeg-aarch64/ffmpeg
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -48,16 +99,9 @@ jobs:
           name: ffmpeg
           path: ./ffmpeg.com
 
-      - name: Upload artifacts
-        if: ${{ always()  && inputs.debug }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-ffmpeg
-          path: ./build-ffmpeg.tar.gz
-
   test_cosmo:
     name: Cosmopolitan FFmpeg ${{ matrix.os }} ${{ matrix.arch }} (test)
-    needs: build_cosmo
+    needs: link_cosmo
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
@@ -100,6 +144,7 @@ jobs:
         if: ${{ !contains(matrix.os, 'BSD') }}
         shell: bash
         run: |
+          chmod +x ./ffmpeg/ffmpeg.com
           ./ffmpeg/ffmpeg.com
 
       - name: Test in VM
@@ -109,6 +154,7 @@ jobs:
           usesh: true
           copyback: false
           run: |
+            chmod +x ./ffmpeg/ffmpeg.com
             ./ffmpeg/ffmpeg.com
 
       - name: Test in VM
@@ -118,6 +164,7 @@ jobs:
           usesh: true
           copyback: false
           run: |
+            chmod +x ./ffmpeg/ffmpeg.com
             ./ffmpeg/ffmpeg.com
 
       - name: Test in VM
@@ -127,4 +174,5 @@ jobs:
           usesh: true
           copyback: false
           run: |
+            chmod +x ./ffmpeg/ffmpeg.com
             ./ffmpeg/ffmpeg.com

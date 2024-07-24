@@ -25,13 +25,16 @@ function download_verify_extract () {
   #set +x
 }
 
+ARCH=$1
+
 WORKDIR=$(pwd)
-BUILDDIR=${WORKDIR}/build
-DEPSDIR=${WORKDIR}/deps
+BUILDBASE=${WORKDIR}/build
+BUILDDIR=${BUILDBASE}/${ARCH}
+DEPSDIR=${WORKDIR}/deps/${ARCH}
 
 if [[ "${DEBUG_CI}" == "true" ]]; then
-  trap "cd ${BUILDDIR} && tar -czf ${WORKDIR}/build-ffmpeg.tar.gz ." EXIT
+  trap "cd ${BUILDBASE} && tar -czf ${WORKDIR}/build-ffmpeg.tar.gz ." EXIT
 fi
 
-mkdir ${BUILDDIR}
-mkdir ${DEPSDIR}
+mkdir -p ${BUILDDIR}
+mkdir -p ${DEPSDIR}

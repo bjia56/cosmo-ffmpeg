@@ -12,12 +12,14 @@ echo "::group::Install dependencies"
 export DEBIAN_FRONTEND=noninteractive
 sudo apt update
 sudo apt -y install \
-  wget pkg-config autoconf git patch \
+  wget pkg-config autoconf git patch nasm \
   gettext bison libtool autopoint gperf ncurses-bin xutils-dev
 
-export AR=$(command -v cosmoar)
-export CC=cosmocc
-export CXX=cosmoc++
+export AR=${ARCH}-unknown-cosmo-ar
+export AS=${ARCH}-unknown-cosmo-as
+export NM="${ARCH}-unknown-cosmo-nm -g"
+export CC=${ARCH}-unknown-cosmo-cc
+export CXX=${ARCH}-unknown-cosmo-c++
 export CFLAGS="-I${DEPSDIR}/include"
 export CPPFLAGS="-I${DEPSDIR}/include"
 export CXXFLAGS="${CPPFLAGS} -fexceptions"
@@ -25,6 +27,14 @@ export LDFLAGS="-L${DEPSDIR}/lib"
 export PKG_CONFIG_PATH="${DEPSDIR}/lib/pkgconfig:${DEPSDIR}/share/pkgconfig"
 
 mkdir -p ${DEPSDIR}/lib/.aarch64
+
+mkdir -p ${DEPSDIR}/include/sys
+touch ${DEPSDIR}/include/sys/sysctl.h
+
+wget https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl
+chmod +x gas-preprocessor.pl
+sudo mv gas-preprocessor.pl /usr/local/bin/
+which gas-preprocessor.pl
 
 echo "::endgroup::"
 ##########
@@ -36,11 +46,11 @@ cd ${BUILDDIR}
 wget https://ffmpeg.org/releases/ffmpeg-6.1.tar.gz
 tar xf ffmpeg-6.1.tar.gz
 cd ffmpeg-6.1
-./configure --prefix=${DEPSDIR}
+./configure --prefix=${DEPSDIR} --enable-cross-compile --cc=${CC} --cxx=${CXX} --ld=${CXX} --ar=${AR} --as=${AS} --nm="${NM}" --arch=${ARCH}
 make -j4
 make install
 
 cd ${WORKDIR}
-cp ${DEPSDIR}/bin/ffmpeg ffmpeg.com
+cp ${DEPSDIR}/bin/ffmpeg ffmpeg
 
 echo "::endgroup::"
